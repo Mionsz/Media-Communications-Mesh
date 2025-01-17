@@ -47,7 +47,7 @@ jobs:
       uses: actions/cache/restore@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
       with:
         path: ${{ env.BUILD_DIR }}
-        key: ${{ runner.os }}-${{ hashFiles('versions.env') }}-${{ hashFiles('scripts/setup*.sh') }}
+        key: ${{ runner.os }}-${{ hashFiles('versions.env') }}-${{ hashFiles('scripts/*.sh') }}
 
     - name: 'Download, unpack and patch build dependencies'
       if: steps.load-local-dependencies-cache.outputs.cache-hit != 'true'
@@ -87,6 +87,14 @@ jobs:
         ${{ github.workspace }}/ffmpeg-plugin/configure-ffmpeg.sh "6.1" --disable-doc --disable-debug && \
         ${{ github.workspace }}/ffmpeg-plugin/configure-ffmpeg.sh "7.0" --disable-doc --disable-debug && \
         rm -rf ${{ github.workspace }}/_build/mcm
+
+    - name: 'Save local dependencies build cache'
+      if: steps.load-local-dependencies-cache.outputs.cache-hit != 'true'
+      id: save-local-dependencies-cache
+      uses: actions/cache/save@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+      with:
+        path: ${{ env.BUILD_DIR }}
+        key: ${{ runner.os }}-${{ hashFiles('versions.env') }}-${{ hashFiles('scripts/*.sh') }}
 
     - name: 'Run coverity'
       uses: vapier/coverity-scan-action@2068473c7bdf8c2fb984a6a40ae76ee7facd7a85 # v1.8.0
