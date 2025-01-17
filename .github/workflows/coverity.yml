@@ -86,7 +86,9 @@ jobs:
         ${{ github.workspace }}/build.sh && \
         ${{ github.workspace }}/ffmpeg-plugin/configure-ffmpeg.sh "6.1" --disable-doc --disable-debug && \
         ${{ github.workspace }}/ffmpeg-plugin/configure-ffmpeg.sh "7.0" --disable-doc --disable-debug && \
-        rm -rf ${{ github.workspace }}/_build/mcm
+        rm -rf ${{ github.workspace }}/_build/mcm && \
+        echo "\"${{ github.workspace }}/ffmpeg-plugin/build-ffmpeg.sh\" \"6.1\"" >> "${{ github.workspace }}/build.sh" && \
+        echo "\"${{ github.workspace }}/ffmpeg-plugin/build-ffmpeg.sh\" \"7.0\"" >> "${{ github.workspace }}/build.sh"
 
     - name: 'Save local dependencies build cache'
       if: steps.load-local-dependencies-cache.outputs.cache-hit != 'true'
@@ -99,7 +101,7 @@ jobs:
     - name: 'Run coverity'
       uses: vapier/coverity-scan-action@2068473c7bdf8c2fb984a6a40ae76ee7facd7a85 # v1.8.0
       with:
-        project: 'Media-Communications-Mesh'
+        project: 'Mionsz/Media-Communications-Mesh'
         email: ${{ secrets.COVERITY_SCAN_EMAIL }}
         token: ${{ secrets.COVERITY_SCAN_TOKEN }}
         build_language: 'cxx'
